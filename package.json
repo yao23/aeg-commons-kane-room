@@ -1,0 +1,23 @@
+{
+  "name": "aeg-commons-kane-room",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.14.0"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.ts",
+    "dev": "node --watch --disable-warning=ExperimentalWarning src/server.ts",
+    "mcp": "node --disable-warning=ExperimentalWarning src/mcp.ts",
+    "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.ts",
+    "test:browser": "node --disable-warning=ExperimentalWarning tests/browser.acceptance.ts",
+    "test:agents": "node --disable-warning=ExperimentalWarning tests/real-agents.acceptance.ts",
+    "import:references": "node --disable-warning=ExperimentalWarning src/import-references.ts",
+    "test:home": "node --disable-warning=ExperimentalWarning tests/home.acceptance.ts",
+    "test:references": "node --disable-warning=ExperimentalWarning tests/reference-display.acceptance.ts"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

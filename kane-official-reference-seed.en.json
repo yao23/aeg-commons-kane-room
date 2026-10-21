@@ -1,0 +1,233 @@
+{
+  "schema_version": "aeg-commons-reference-content-1",
+  "purpose": "Curated content interchange, NOT the existing app database schema, a migration, or executable Kane integration.",
+  "created_on": "2026-10-20",
+  "language": "en",
+  "import_policy": {
+    "opt_in": true,
+    "preserve_existing_data": true,
+    "deduplicate_by": "record id and revision",
+    "on_user_modified_record": "skip and report the conflict; do not overwrite",
+    "create_fake_people_threads_or_activity": false,
+    "count_as_verified_experience": false,
+    "auto_execute_commands_or_fetch_urls": false
+  },
+  "sources": {
+    "agent-mode": {
+      "title": "How to Use Kane CLI Agent Mode",
+      "publisher": "TestMu AI",
+      "url": "https://www.testmuai.com/docs/kane-cli-agent-mode",
+      "reviewed_on": "2026-10-20"
+    },
+    "modes": {
+      "title": "Kane CLI Modes: TUI, Headless & Agent",
+      "publisher": "TestMu AI",
+      "url": "https://www.testmuai.com/docs/kane-cli-modes",
+      "reviewed_on": "2026-10-20"
+    },
+    "evidence": {
+      "title": "Kane CLI Evidence Packs Explained",
+      "publisher": "TestMu AI",
+      "url": "https://www.testmuai.com/docs/kane-cli-evidence",
+      "reviewed_on": "2026-10-20"
+    },
+    "evidence-viewing": {
+      "title": "How to View Kane CLI Evidence Packs",
+      "publisher": "TestMu AI",
+      "url": "https://www.testmuai.com/docs/kane-cli-evidence-viewing",
+      "reviewed_on": "2026-10-20"
+    },
+    "uploads": {
+      "title": "How to Upload Kane CLI Tests to Test Manager",
+      "publisher": "TestMu AI",
+      "url": "https://www.testmuai.com/docs/kane-cli-tms-integration",
+      "reviewed_on": "2026-10-20"
+    },
+    "evidence-validation": {
+      "title": "How to Validate Kane CLI Evidence Packs",
+      "publisher": "TestMu AI",
+      "url": "https://www.testmuai.com/docs/kane-cli-evidence-validate",
+      "reviewed_on": "2026-10-20"
+    },
+    "testmd": {
+      "title": "How to Write Kane CLI Tests in Markdown",
+      "publisher": "TestMu AI",
+      "url": "https://www.testmuai.com/docs/kane-cli-testmd",
+      "reviewed_on": "2026-10-20"
+    }
+  },
+  "records": [
+    {
+      "revision": 1,
+      "source_type": "OFFICIAL_DOCUMENTATION",
+      "display_badge": "Documentation reference",
+      "curated_by": "AEG Commons",
+      "publisher_endorsement": false,
+      "source_review_date": "2026-10-20",
+      "verification_status": "NOT_RUN",
+      "tested_cli_version": null,
+      "real_user_question": false,
+      "outcome_receipts": [],
+      "id": "kane-doc-command-completion",
+      "title": "Kane finished a step. Did the whole command finish?",
+      "short_answer": "First identify the command family. A completion event for one step is not necessarily completion of the enclosing command.",
+      "documented_notes": [
+        {
+          "text": "Agent Mode emits newline-delimited JSON on stdout. One-shot run finishes with run_end. For testmd run, the file-level completion is test_md_done; run_end events inside that stream can represent individual steps. Check the process exit code as well; some early exits have no normal completion event.",
+          "source_ids": [
+            "agent-mode"
+          ]
+        },
+        {
+          "text": "The modes documentation distinguishes a failed run or upload, an execution/setup error, and a cancellation or timeout. Do not infer an application defect from every nonzero exit.",
+          "source_ids": [
+            "modes"
+          ]
+        }
+      ],
+      "aeg_suggestions": [
+        "Ask for the command family and installed CLI version before proposing a parser change.",
+        "When the expected completion event is absent, report incomplete evidence rather than inventing a passing result."
+      ],
+      "applies_when": [
+        "A coding agent is interpreting Kane command output."
+      ],
+      "does_not_establish": [
+        "That any local Kane command was run.",
+        "That a task, fix, or transfer has been verified."
+      ],
+      "discussion_prompt": "Which command family did you use, which completion event did you observe, and did the process exit? Share only a reviewed excerpt.",
+      "search_terms": [
+        "run_end",
+        "test_md_done",
+        "NDJSON",
+        "stdout",
+        "completion",
+        "exit code",
+        "testmd run",
+        "agent mode"
+      ],
+      "source_ids": [
+        "agent-mode",
+        "modes"
+      ]
+    },
+    {
+      "revision": 1,
+      "source_type": "OFFICIAL_DOCUMENTATION",
+      "display_badge": "Documentation reference",
+      "curated_by": "AEG Commons",
+      "publisher_endorsement": false,
+      "source_review_date": "2026-10-20",
+      "verification_status": "NOT_RUN",
+      "tested_cli_version": null,
+      "real_user_question": false,
+      "outcome_receipts": [],
+      "id": "kane-doc-share-evidence-safely",
+      "title": "Can I share a failed Kane run without exposing private data?",
+      "short_answer": "Start with a reviewed, minimal summary. Do not treat an entire evidence pack as public-safe by default.",
+      "documented_notes": [
+        {
+          "text": "Evidence packs can include the objective, outcomes, runner name and email, screenshots, browser console/network logs, and execution logs.",
+          "source_ids": [
+            "evidence"
+          ]
+        },
+        {
+          "text": "The evidence serve viewer reads a sealed pack through a loopback server without uploading it. This viewing behavior is separate from running tests: the Test Manager documentation describes default session uploads, including screenshots and run artifacts, and publication of replay evidence.",
+          "source_ids": [
+            "evidence-viewing",
+            "uploads"
+          ]
+        },
+        {
+          "text": "Evidence validation checks structure, integrity, and completeness. A producer verdict can remain passed even when a failed or broken step triggers a validation warning; the validator does not replace the producer verdict.",
+          "source_ids": [
+            "evidence-validation"
+          ]
+        }
+      ],
+      "aeg_suggestions": [
+        "Review screenshots and text for credentials, private URLs, account details, personal data, and employer material before sharing.",
+        "Keep the original pack unchanged in its approved location. Share a separate sanitized summary or approved derivative, with provenance and access restrictions.",
+        "Do not equate a structurally valid pack with a correct fix or a privacy guarantee."
+      ],
+      "applies_when": [
+        "A developer wants help with a run without publishing the full raw artifacts."
+      ],
+      "does_not_establish": [
+        "That redaction is complete.",
+        "That a local viewer prevents earlier run uploads.",
+        "That evidence contents have been independently reproduced."
+      ],
+      "discussion_prompt": "What is the smallest reviewed excerpt that explains the failure? Keep credentials and raw private artifacts out of the room.",
+      "search_terms": [
+        "privacy",
+        "share",
+        "logs",
+        "screenshots",
+        "evidence pack",
+        "upload",
+        "email",
+        "redact",
+        "evidence serve"
+      ],
+      "source_ids": [
+        "evidence",
+        "evidence-viewing",
+        "uploads",
+        "evidence-validation"
+      ]
+    },
+    {
+      "revision": 1,
+      "source_type": "OFFICIAL_DOCUMENTATION",
+      "display_badge": "Documentation reference",
+      "curated_by": "AEG Commons",
+      "publisher_endorsement": false,
+      "source_review_date": "2026-10-20",
+      "verification_status": "NOT_RUN",
+      "tested_cli_version": null,
+      "real_user_question": false,
+      "outcome_receipts": [],
+      "id": "kane-doc-interaction-checks",
+      "title": "The first screen looks right. What should I check after a click?",
+      "short_answer": "Discuss the state transitions and the behavior that must remain true, not only what the initial page displays.",
+      "documented_notes": [
+        {
+          "text": "Kane testmd represents a flow as named Markdown steps with plain-language objectives; the official examples combine actions and observable checks. The documentation distinguishes one-shot run from saved tests intended for reuse.",
+          "source_ids": [
+            "testmd"
+          ]
+        }
+      ],
+      "aeg_suggestions": [
+        "As a discussion exercise, identify the initial state, one meaningful action, the resulting visible state, and the invariant being checked.",
+        "Consider a repeated action, an invalid input, and a successful path when relevant. A passing initial screen does not establish the later states.",
+        "This reference is not an executable Kane test, an actual run, or a claim that Kane discovered a defect."
+      ],
+      "applies_when": [
+        "A developer is choosing what to observe in an interactive Web flow."
+      ],
+      "does_not_establish": [
+        "Coverage of all application states.",
+        "Correctness of the already-frozen phone fixtures.",
+        "Any Kane execution before Hack Day."
+      ],
+      "discussion_prompt": "Which user action could change the result after the first screen, and what should remain true afterward?",
+      "search_terms": [
+        "interaction",
+        "resend",
+        "click",
+        "state",
+        "first screen",
+        "test coverage",
+        "assertion",
+        "testmd"
+      ],
+      "source_ids": [
+        "testmd"
+      ]
+    }
+  ]
+}

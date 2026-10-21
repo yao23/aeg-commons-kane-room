@@ -1,0 +1,18 @@
+AEG Commons — Kane Room
+
+An independent participant project. Not official Kane support.
+No project-wide software license has been specified. Public availability of this
+repository is not a grant of an open-source license.
+
+The three reference notes are summaries curated by AEG Commons from the supplied
+October 20, 2026 content handoff. They cite TestMu AI documentation. Documented
+summaries are distinguished from AEG suggestions, and do not claim publisher
+endorsement, verbatim quotation, local Kane execution or verified results.
+Original source links, titles, publisher and supplied review dates are retained
+in kane-official-reference-seed.en.json and curated-references.json.
+
+The linked documentation, product names and any associated trademarks remain
+subject to their respective owners' rights. No third-party documentation assets,
+logos, screenshots, source packages or full articles are vendored here. The
+README screenshot depicts this application's own UI and public reference notes.
+Development dependencies are obtained separately and retain their own licenses.
