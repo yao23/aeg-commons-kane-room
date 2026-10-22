@@ -11,7 +11,7 @@ export async function fixture() {
   const dir = mkdtempSync(join(tmpdir(), 'kane-acceptance-')), port = await freePort(), origin = `http://127.0.0.1:${port}`;
   let child: any, errors = '';
   async function start() {
-    child = spawn(process.execPath, ['--disable-warning=ExperimentalWarning', 'src/server.ts'], { cwd: root, env: { ...process.env, PORT: String(port), APP_ORIGIN: origin, DB_PATH: join(dir, 'room.sqlite') }, stdio: ['ignore', 'pipe', 'pipe'] });
+    child = spawn(process.execPath, ['--disable-warning=ExperimentalWarning', 'src/server.ts'], { cwd: root, env: { ...process.env, APP_MODE: 'local', LISTEN_HOST: '127.0.0.1', TRUSTED_PROXIES: '', PORT: String(port), APP_ORIGIN: origin, DB_PATH: join(dir, 'room.sqlite') }, stdio: ['ignore', 'pipe', 'pipe'] });
     child.stderr.on('data', (b: any) => { errors += b; });
     await new Promise<void>((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error('Server startup timed out. ' + errors)), 10000);

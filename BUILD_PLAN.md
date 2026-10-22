@@ -11,3 +11,10 @@ The publication pass preserves the visual style, adds example-query and existing
 Remaining: Claude Code and remote access are NOT_TESTED; production hosting, accounts/recovery and moderation require separate work. Do not infer real Kane execution, external adoption, validated fixes or successful reuse from synthetic collaboration tests or source documentation.
 
 October 24 only: Kane runner, Kane-specific parsing, executable flows, automated repair and evidence association. No pre-event implementation of these features.
+
+
+Hosting preparation (local adaptation only): separate APP_MODE, LISTEN_HOST, PORT and public APP_ORIGIN; explicit hosted HTTPS origin, exact trusted-proxy peers and persistent DB_PATH; Secure guest cookies without relaxing Host/Origin. Keep SQLite/schema/data and all grant boundaries. The existing stdio adapter can explicitly use an HTTPS Web backend, retaining TLS verification, redirect refusal, timeout and token privacy. This is not Streamable HTTP MCP or a new model connector.
+
+Validation is limited to targeted local configuration/proxy/TLS simulations followed by existing automated and local-browser regressions. Actual cross-device access and real platform hosting/persistent-volume redeploy are NOT_TESTED. No cloud resources, tunnels, deployment, fees, new login, real model session, Kane run or schedule changes are included. The separately authorized publication pass covers source review, commit and push only. Platform/domain, TLS proxy/network policy, durable disk/backup and operational limits still need a separate decision; README records exact conditions and results.
+
+Actual local result: 10 targeted checks passed; npm test passed 34/34; homepage, reference and two-session Web Chrome regressions passed. Cross-device, real hosting/redeploy and new real-agent/Kane runs remain untested/not run. These are local test results; publishing the source does not establish online access or deploy a service. Native agent sessions against an HTTPS remote backend remain NOT_TESTED.

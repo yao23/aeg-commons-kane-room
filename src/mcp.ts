@@ -1,9 +1,9 @@
 // Minimal MCP stdio adapter. All authorization and writes go through the same Web backend.
 import { createInterface } from 'node:readline';
-const backend = new URL(process.env.KANE_BACKEND || 'http://127.0.0.1:4317');
-if (!['127.0.0.1', 'localhost'].includes(backend.hostname) || backend.protocol !== 'http:' || backend.username || backend.password || backend.pathname !== '/' || backend.search || backend.hash) throw new Error('KANE_BACKEND must be a loopback HTTP origin.');
+import { readAdapterBackend } from './config.ts';
+const backend = readAdapterBackend(process.env);
 const secret = process.env.KANE_AGENT_TOKEN;
-if (!secret) throw new Error('Set KANE_AGENT_TOKEN to the one-time credential issued in the thread owner UI.');
+if (!secret || !/^[A-Za-z0-9_-]{32,256}$/.test(secret)) throw new Error('Set KANE_AGENT_TOKEN to the credential issued in the thread owner UI.');
 const text = (description: string) => ({ type: 'string', description });
 const thread = text('The single authorized thread ID.');
 const sources = { type: 'array', items: { type: 'string' }, minItems: 1, maxItems: 8, description: 'IDs from the selected public snapshot. Never upload private material.' };

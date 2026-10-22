@@ -1,16 +1,14 @@
 import { createServer } from 'node:http';
 import { readFileSync, chmodSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { resolve } from 'node:path';
+import { readAppConfig, checkDatabaseLocation, normalizePeer } from './config.ts';
 import { Store, Fault, exact, insist, str } from './store.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const port = Number(process.env.PORT || 4317);
-const origin = process.env.APP_ORIGIN || `http://127.0.0.1:${port}`;
-const url = new URL(origin);
-insist(['127.0.0.1', 'localhost'].includes(url.hostname) && url.protocol === 'http:' && Number(url.port || 80) === port, 'This MVP only supports a loopback HTTP origin matching PORT.');
+const config = readAppConfig(process.env, root);
+const { port, origin, dbPath } = config;
+checkDatabaseLocation(config);
 process.umask(0o077);
-const dbPath = resolve(process.env.DB_PATH || `${root}/data/kane.sqlite`);
 const store = new Store(dbPath);
 store.setReferences(JSON.parse(readFileSync(`${root}/curated-references.json`, 'utf8')));
 chmodSync(dbPath, 0o600);
@@ -22,8 +20,16 @@ const server = createServer(async (req, res) => {
   res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
   const send = (status: number, data: any) => { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' }); res.end(JSON.stringify(data)); };
   try {
-    insist(req.headers.host === url.host, 'Invalid Host header.', 403);
-    if (req.headers.origin) insist(req.headers.origin === origin, 'Cross-origin requests are not allowed.', 403);
+    const occurrences = (name: string) => req.rawHeaders.filter((_, i) => i % 2 === 0 && req.rawHeaders[i].toLowerCase() === name).length;
+    insist(occurrences('host') === 1 && req.headers.host === config.host, 'Invalid Host header.', 403);
+    insist(occurrences('origin') <= 1, 'Invalid Origin header.', 403);
+    if (config.mode === 'hosted') {
+      insist(config.trustedProxies.includes(normalizePeer(req.socket.remoteAddress || '')), 'Untrusted proxy connection.', 403);
+      insist(occurrences('x-forwarded-proto') === 1 && req.headers['x-forwarded-proto'] === 'https', 'A trusted HTTPS proxy is required.', 403);
+    }
+    // Forwarded, X-Forwarded-Host and X-Forwarded-For never replace Host, Origin or the socket peer.
+
+    if (req.headers.origin !== undefined) insist(req.headers.origin === origin, 'Cross-origin requests are not allowed.', 403);
     const target = new URL(req.url || '/', origin), path = target.pathname;
     const key = req.socket.remoteAddress || 'local', time = Date.now();
     if (limits.size > 1000) for (const [k, v] of limits) if (v.until < time) limits.delete(k);
@@ -58,7 +64,7 @@ const server = createServer(async (req, res) => {
     if (cookie) owner = store.authenticate(cookie);
     if (write && !owner) {
       const s = store.session(); owner = s.id;
-      res.setHeader('Set-Cookie', `kane_session=${s.raw}; HttpOnly; SameSite=Strict; Path=/; Max-Age=2592000`);
+      res.setHeader('Set-Cookie', `kane_session=${s.raw}; HttpOnly; SameSite=Strict; Path=/; Max-Age=2592000${config.secureCookie ? "; Secure" : ""}`);
     }
     if (path === '/api/session' && req.method === 'GET') { send(200, { active: !!owner, label: owner ? `Guest ${owner.slice(0, 5)}` : 'Visitor', recovery: 'Session access depends on this browser cookie. No account or recovery is provided in this MVP.' }); return; }
     if (path === '/api/session' && req.method === 'POST') { exact(body, []); send(200, { active: true, label: `Guest ${owner!.slice(0, 5)}` }); return; }
@@ -93,7 +99,7 @@ const server = createServer(async (req, res) => {
     else { console.error(error); send(500, { error: 'Internal server error. No content was published. Try again.' }); }
   }
 });
-server.listen(port, '127.0.0.1', () => console.log(`AEG Commons — Kane Room\nLocal: ${origin}\nSQLite: ${dbPath}`));
+server.listen(port, config.listenHost, () => console.log(`AEG Commons — Kane Room\nMode: ${config.mode}\nListen: ${config.listenHost}:${port}\n${config.mode === 'local' ? 'Local' : 'Public origin'}: ${origin}\nSQLite: ${dbPath}`));
 function shutdown() {
   server.close(() => { store.db.close(); process.exit(0); });
   // Do not let a browser's remaining HTTP connection block a local restart forever.
